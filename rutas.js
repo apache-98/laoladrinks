@@ -24,3 +24,12 @@ app.post("/usuarios/listaremail", function(request,response){
 
     usuarioscontroler.listaremail(request,response)
 })
+
+app.get("/usuarios/activar/:email/:codigo", function(request,response){
+
+    usuarioscontroler.activar(request,response)
+})
+app.post("/usuarios/login", function(request,response){
+
+    usuarioscontroler.login(request,response)
+})

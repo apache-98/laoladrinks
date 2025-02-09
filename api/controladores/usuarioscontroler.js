@@ -139,6 +139,47 @@ usuarioscontroler.registrar = function(request,response){
             
 }
 
+usuarioscontroler.login = function(request,response){
+    var post = {
+        email:request.body.email,
+        contraseña:request.body.contraseña
+    }
+
+    if (post.email =="" || post.email ==null || post.email == undefined){
+        response.json({mensaje: "el campo email es obligatorio ", state:false})
+        return false
+    }
+
+
+    if (post.contraseña =="" || post.contraseña ==null || post.contraseña == undefined){
+        response.json({mensaje: "el campo contraseña es obligatorio ", state:false})
+        return false
+    }
+
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if(regex.test(post.email) == false){
+        response.json({mensaje: "escriba un email valido ", state:false})
+        return false
+    }
+
+    post.contraseña = sha256(post.contraseña + config.secret)
+
+    usuariosmodels.login(post,function(respuesta){
+        if(respuesta.length == 0){
+            response.json({state:true,mensaje:"credenciales invalidas"})
+
+        }
+        else{
+            if(respuesta[0].estado == 'inactivo'){
+                response.json({state:true,mensaje:"por favor avtiva la cuenta"})
+            }
+            response.json({state:true,mensaje:"bienvenido " + respuesta[0].nombre + " " + respuesta[0].apellido})
+        }
+        
+    })
+            
+}
+
  
 
 usuarioscontroler.actualizar = function(request,response){
@@ -280,5 +321,35 @@ usuarioscontroler.listaremail = function(request,response){
 
 }
 
+usuarioscontroler.activar = function(request,response){
+    var post = {
+        email:request.params.email,
+        codigo:request.params.codigo
+
+    }
+
+    if (post.email =="" || post.email ==null || post.email == undefined){
+        response.json({mensaje: "el campo email es obligatorio ", state:false})
+        return false
+    }
+
+    if (post.codigo =="" || post.codigo ==null || post.codigo == undefined){
+        response.json({mensaje: "el campo codigo es obligatorio ", state:false})
+        return false
+    }
+
+    usuariosmodels.activar(post, function(res){
+        if(res.modifiedCount == 0){
+            response.json({state:false, mensaje: "no se pudo activar la cuenta"})
+        }
+        else{
+            response.json({state:true, mensaje: "cuenta verificada correctamente"})
+        }
+        response.json(res)
+    })
+
+
+
+}
 
 module.exports.usuarioscontroler = usuarioscontroler 

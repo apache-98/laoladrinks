@@ -73,7 +73,7 @@ usuariosmodels.eliminar = function(post,callback){
 }
 
 usuariosmodels.listar = function(post,callback){
-    mymodel.find({}).then((respuesta) =>{
+    mymodel.find({},{contraseña:0,codigo:0}).then((respuesta) =>{
         return callback(respuesta)
     }).catch((error) =>{
         console.log(error)
@@ -82,13 +82,37 @@ usuariosmodels.listar = function(post,callback){
 }
 
 usuariosmodels.listaremail = function(post,callback){
-    mymodel.find({email:post.email}).then((respuesta) =>{
+    mymodel.find({email:post.email},{contraseña:0,codigo:0}).then((respuesta) =>{
         return callback(respuesta)
     }).catch((error) =>{
         console.log(error)
         return callback({state:false})
     })
 }
+
+usuariosmodels.activar = function(post, callback){
+    mymodel.updateOne({email:post.email, codigo:post.codigo},{
+       estado: "activo"
+    }).then((respuesta)=>{
+
+        return callback(respuesta)
+
+    }).catch((error) =>{
+        console.log(error)
+        return callback({state:false})
+    })
+
+}
+
+usuariosmodels.login = function(post,callback){
+    mymodel.find({email:post.email,contraseña:post.contraseña},{nombre:1,apellido:1,estado:1}).then((respuesta) =>{
+        return callback(respuesta)
+    }).catch((error) =>{
+        console.log(error)
+        return callback({state:false})
+    })
+}
+
 
 
 
