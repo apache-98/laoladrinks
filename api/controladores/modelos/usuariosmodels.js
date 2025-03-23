@@ -7,9 +7,10 @@ var usuariosSchema = new Schema({
     email:String,
     nombre:String,
     apellido: String,
-    contraseña: String,
+    password: String,
     estado: String,
-    codigo: String
+    codigo: String,
+    perfil:String
 })
 
 const mymodel = mongoose.model("usuarios",usuariosSchema)
@@ -20,11 +21,12 @@ usuariosmodels.registrar = function (post, callback){
     instancia.email = post.email
     instancia.nombre = post.nombre
     instancia.apellido = post.apellido
-    instancia.contraseña = post.contraseña
+    instancia.password = post.password
     instancia.estado = post.estado
     instancia.codigo = post.codigo
+    instancia.perfil = "Cliente"
 
-    instancia.save().then((respuesta)=>{
+    instancia.save().then((respuesta)=>{ 
         return callback ({state:true})
     }).catch((error)=>{
         console.log(error)
@@ -35,10 +37,12 @@ usuariosmodels.registrar = function (post, callback){
 }
 
 usuariosmodels.verposicionemail = function(post, callback){
-    mymodel.findOne({email:post.email}).then((respuesta)=>{
-        console.log("------------>")
-        console.log(respuesta)
-        return callback (respuesta)
+    mymodel.findOne({email:post.email})
+    .then((respuesta)=>{
+        return callback(respuesta) // cambio
+    }).catch((error) =>{
+        console.log(error)
+        return callback({state:false})
     })
 
 
@@ -49,7 +53,10 @@ usuariosmodels.verposicionemail = function(post, callback){
 usuariosmodels.actualizar = function(post, callback){
     mymodel.updateOne({email:post.email},{
         nombre:post.nombre,
-        apellido:post.apellido
+        apellido:post.apellido,
+        perfil:post.perfil,
+        estado:post.estado
+
     }).then((respuesta)=>{
         return callback({state:true})
     }).catch((error) =>{
@@ -58,13 +65,13 @@ usuariosmodels.actualizar = function(post, callback){
     })
 /*     usuarios[post.posicion].nombre = post.nombre
     usuarios[post.posicion].apellido = post.apellido
-    return callback ({state: true}) */
+    return callback ({srespuesta}) */
 }
 
 usuariosmodels.eliminar = function(post,callback){
     mymodel.deleteOne({email:post.email})
     .then((respuesta)=>{
-        return callback({state:true})
+        return callback({respuesta})
     }).catch((error) =>{
         console.log(error)
         return callback({state:false})
@@ -73,7 +80,7 @@ usuariosmodels.eliminar = function(post,callback){
 }
 
 usuariosmodels.listar = function(post,callback){
-    mymodel.find({},{contraseña:0,codigo:0}).then((respuesta) =>{
+    mymodel.find({},{password:0,codigo:0,__v:0}).then((respuesta) =>{
         return callback(respuesta)
     }).catch((error) =>{
         console.log(error)
@@ -82,7 +89,7 @@ usuariosmodels.listar = function(post,callback){
 }
 
 usuariosmodels.listaremail = function(post,callback){
-    mymodel.find({email:post.email},{contraseña:0,codigo:0}).then((respuesta) =>{
+    mymodel.find({email:post.email},{password:0,codigo:0}).then((respuesta) =>{
         return callback(respuesta)
     }).catch((error) =>{
         console.log(error)
@@ -95,7 +102,7 @@ usuariosmodels.activar = function(post, callback){
        estado: "activo"
     }).then((respuesta)=>{
 
-        return callback(respuesta)
+        return callback(respuesta)//cambio2
 
     }).catch((error) =>{
         console.log(error)
@@ -105,8 +112,8 @@ usuariosmodels.activar = function(post, callback){
 }
 
 usuariosmodels.login = function(post,callback){
-    mymodel.find({email:post.email,contraseña:post.contraseña},{nombre:1,apellido:1,estado:1}).then((respuesta) =>{
-        return callback(respuesta)
+    mymodel.find({email:post.email,password:post.password},{_id:1,nombre:1,apellido:1,estado:1,perfil:1}).then((respuesta) =>{
+        return callback(respuesta)//cambio 3
     }).catch((error) =>{
         console.log(error)
         return callback({state:false})
@@ -115,5 +122,5 @@ usuariosmodels.login = function(post,callback){
 
 
 
-
+usuariosmodels.mymodel = mymodel
 module.exports.usuariosmodels = usuariosmodels

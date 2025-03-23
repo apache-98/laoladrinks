@@ -9,7 +9,7 @@ usuarioscontroler.registrar = function(request,response){
         email:request.body.email,
         nombre:request.body.nombre,
         apellido:request.body.apellido,
-        contraseña:request.body.contraseña
+        password:request.body.password
     }
 
     if (post.email =="" || post.email ==null || post.email == undefined){
@@ -27,8 +27,8 @@ usuarioscontroler.registrar = function(request,response){
         return false
     }
 
-    if (post.contraseña =="" || post.contraseña ==null || post.contraseña == undefined){
-        response.json({mensaje: "el campo contraseña es obligatorio ", state:false})
+    if (post.password =="" || post.password ==null || post.password == undefined){
+        response.json({mensaje: "el campo password es obligatorio ", state:false})
         return false
     }
 
@@ -48,7 +48,7 @@ usuarioscontroler.registrar = function(request,response){
         return false
     }
 
-    post.contraseña = sha256(post.contraseña + config.secret)
+    post.password = sha256(post.password + config.secret)
     
     var letras = ["x", "a", "w", "p"]
     var posicionaleatoria = Math.floor(Math.random()* (3 - 0) + 0)
@@ -61,6 +61,7 @@ usuarioscontroler.registrar = function(request,response){
 
     usuariosmodels.verposicionemail(post, function(existe) {
         if (existe == null){
+            
             usuariosmodels.registrar(post,function(respuesta){
                 if (respuesta.state == true){
 
@@ -102,7 +103,7 @@ usuarioscontroler.registrar = function(request,response){
                                 </div>
 
                                 <button style="background: #6A11CB; color: white; padding: 12px 25px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(106, 17, 203, 0.3);">
-                                    <a href = "http://localhost:3000/usuarios/activar/${post.email}/${post.codigo}">Activar Cuenta</a>
+                                    <a href = "http://localhost:4200/activar/${post.email}/${post.codigo}">Activar Cuenta</a>
                                 </button>
                                 </div>
 
@@ -111,10 +112,10 @@ usuarioscontroler.registrar = function(request,response){
 
                     transporter.sendMail(mailoptions,(error, info)=>{
                         if(error){
-                            console.log(error)
+                         
                         }
                         else{
-                            console.log(info)
+                          
                         }
                     })
 
@@ -129,10 +130,11 @@ usuarioscontroler.registrar = function(request,response){
 
         }
         else{
+            
             response.json({state:false, mensaje:"este correo ya esta registrado"})
         }
 
-    })
+    }) 
 
 
 
@@ -142,7 +144,7 @@ usuarioscontroler.registrar = function(request,response){
 usuarioscontroler.login = function(request,response){
     var post = {
         email:request.body.email,
-        contraseña:request.body.contraseña
+        password:request.body.password
     }
 
     if (post.email =="" || post.email ==null || post.email == undefined){
@@ -151,8 +153,8 @@ usuarioscontroler.login = function(request,response){
     }
 
 
-    if (post.contraseña =="" || post.contraseña ==null || post.contraseña == undefined){
-        response.json({mensaje: "el campo contraseña es obligatorio ", state:false})
+    if (post.password =="" || post.password ==null || post.password == undefined){
+        response.json({mensaje: "el campo password es obligatorio ", state:false})
         return false
     }
 
@@ -162,18 +164,27 @@ usuarioscontroler.login = function(request,response){
         return false
     }
 
-    post.contraseña = sha256(post.contraseña + config.secret)
+    post.password = sha256(post.password + config.secret)
 
     usuariosmodels.login(post,function(respuesta){
         if(respuesta.length == 0){
-            response.json({state:true,mensaje:"credenciales invalidas"})
+            response.json({state:false,mensaje:"credenciales invalidas"})
 
         }
         else{
             if(respuesta[0].estado == 'inactivo'){
-                response.json({state:true,mensaje:"por favor avtiva la cuenta"})
+                response.json({state:false,mensaje:"por favor activa la cuenta"})
             }
-            response.json({state:true,mensaje:"bienvenido " + respuesta[0].nombre + " " + respuesta[0].apellido})
+            else{
+
+                request.session.nombre = respuesta[0].nombre + " " + respuesta[0].apellido
+                request.session._id = respuesta[0]._id
+                request.session.perfil = respuesta[0].perfil
+
+                response.json({state:true,mensaje:"bienvenido " + respuesta[0].nombre + " " + respuesta[0].apellido})
+
+            }
+            
         }
         
     })
@@ -187,6 +198,8 @@ usuarioscontroler.actualizar = function(request,response){
         email:request.body.email,
         nombre:request.body.nombre,
         apellido:request.body.apellido,
+        perfil:request.body.perfil,
+        estado:request.body.estado,
         
     }
 
@@ -202,6 +215,17 @@ usuarioscontroler.actualizar = function(request,response){
 
     if (post.apellido =="" || post.apellido ==null || post.apellido == undefined){
         response.json({mensaje: "el campo apellido es obligatorio ", state:false})
+        return false
+    }
+
+    if (post.perfil =="" || post.perfil ==null || post.perfil == undefined){
+        response.json({mensaje: "el campo perfil es obligatorio ", state:false})
+        return false
+    }
+
+
+    if (post.estado =="" || post.estado ==null || post.estado == undefined){
+        response.json({mensaje: "el campo estado es obligatorio ", state:false})
         return false
     }
 
@@ -233,7 +257,7 @@ usuarioscontroler.actualizar = function(request,response){
                     response.json({mensaje: "usuario actualizado correctamente ", state:true})
                 }
                 else{
-                    response.json({mensaje: "se presento un error al actaulizar ", state:false})
+                    response.json({mensaje: "se presento un error al actualizar ", state:false})
                 }
             })
 
@@ -323,8 +347,8 @@ usuarioscontroler.listaremail = function(request,response){
 
 usuarioscontroler.activar = function(request,response){
     var post = {
-        email:request.params.email,
-        codigo:request.params.codigo
+        email:request.body.email,
+        codigo:request.body.codigo
 
     }
 
@@ -345,7 +369,6 @@ usuarioscontroler.activar = function(request,response){
         else{
             response.json({state:true, mensaje: "cuenta verificada correctamente"})
         }
-        response.json(res)
     })
 
 
