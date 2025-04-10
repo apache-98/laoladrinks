@@ -13,7 +13,7 @@ clientecontroler.registrar = function(request,response){
         mensaje:request.body.mensaje,
         
     }
-
+/* 
     if (post.nombre =="" || post.nombre ==null || post.nombre == undefined){
         response.json({mensaje: "el campo nombre es obligatorio ", state:false})
         return false
@@ -27,7 +27,7 @@ clientecontroler.registrar = function(request,response){
     if (post.telefono == "" || post.telefono == null || post.telefono == undefined){
         response.json({mensaje: "el campo telefono es obligatorio ", state:false})
         return false
-    }
+    } */
 
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if(regex.test(post.email) == false){

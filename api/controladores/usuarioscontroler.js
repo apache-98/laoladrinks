@@ -103,7 +103,7 @@ usuarioscontroler.registrar = function(request,response){
                                 </div>
 
                                 <button style="background: #6A11CB; color: white; padding: 12px 25px; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(106, 17, 203, 0.3);">
-                                    <a href = "http://localhost:4200/activar/${post.email}/${post.codigo}">Activar Cuenta</a>
+                                    <a href = "${config.urlreal}"/activar/${post.email}/${post.codigo}">Activar Cuenta</a>
                                 </button>
                                 </div>
 

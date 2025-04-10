@@ -82,17 +82,17 @@ app.get("/cliente/listar",soloadmin,function(request,response){
 
 var productoscontroler = require("./api/controladores/productoscontroler.js").productoscontroler
 
-app.post("/productos/guardar",soloadmin, function(request,response){
+app.post("/productos/guardar", function(request,response){
 
     productoscontroler.guardar(request,response)
 })
 
-app.post("/productos/actualizar",soloadmin, function(request,response){
+app.post("/productos/actualizar", function(request,response){
 
     productoscontroler.actualizar(request,response)
 })
 
-app.post("/productos/eliminar",soloadmin, function(request,response){
+app.post("/productos/eliminar", function(request,response){
 
     productoscontroler.eliminar(request,response)
 })
