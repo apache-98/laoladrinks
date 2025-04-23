@@ -3,7 +3,7 @@ var config = {
     sesiones:{}
 }
 config.urlreal = "https://laoladrinks.tupagina.online"
-config.puertoexpress = 3000
+config.puertoexpress = 3001
 
 config.bd = "Pagina" //nombre bd mongo
 config.bdUser = "adminpagina"
@@ -26,7 +26,8 @@ config.sesiones.expiracion = 100000 * 5
 config.listablanca = [
     "http://localhost:4200",
     "http://localhost:9876",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "https://laoladrinks.tupagina.online"
 ]
  
 module.exports.config = config
