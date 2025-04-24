@@ -112,10 +112,10 @@ usuarioscontroler.registrar = function(request,response){
 
                     transporter.sendMail(mailoptions,(error, info)=>{
                         if(error){
-                         
+                         console.log(error)
                         }
                         else{
-                          
+                          console.log(info)
                         }
                     })
 
